@@ -1,4 +1,4 @@
-function lil_grow ( sketch ) {
+function Forest( sketch ) {
 var things = [];
 var num_things = 100;
 
