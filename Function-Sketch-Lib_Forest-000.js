@@ -1,4 +1,4 @@
-function forest ( sketch ) {
+function forest0 ( sketch ) {
 var things = [];
 var num_things = 100;
 

@@ -1,4 +1,4 @@
-function forest( sketch ) {
+function forest1( sketch ) {
 var things = [];
 var num_things = 100;
 
@@ -7,20 +7,17 @@ var num_things = 100;
 
 var w = 600;
 var h = 600;
-var div = 30;
+var div = 8 ;
 var sz = 4;
 var disp_w = 300;
 var range = 250;
 var consumer;
-var cells = [];
+var cell_Count =((div)*(div));
+var cells = [cell_Count];
 
 var pause;
 
-/*
- * @name Array of Objects
- * @description Create a Jitter class, instantiate an array of objects
- * and move them around the screen.
- */
+
 var trees = []; // array of Tree objects
 var millisec;
 
@@ -32,15 +29,22 @@ sketch.setup= function() {
   //for (var i=0; i<50; i++) {
   //  bugs.push(new Tree());
   //}
-  for (var x = 40; x < w; x+=(w/10)){
-    for (var y = 40; y< h; y+=(h/10)){
-      trees.push(new Tree(x, y, sketch.random(40,20), sketch.random(8,12), sketch.random(w,h)));////x,y,startsize , number of steps, length
-      trees[trees.length-1].populate();
+  var loc = 0
+  for (var x = 1 ; x <= div; x+=1){
+
+    for (var y = 1; y<= div; y+=1){
+      //sketch.print("index"+String(loc), "wtf")
+      trees[loc] = (new Tree(( ((w/div)*x)-40), (y*(h/div))-40, sketch.random(40,20), sketch.random(8,12), sketch.random(w,h)));////x,y,startsize , number of steps, length
+      trees[loc].populate();
+      loc+=1;
+      //trees.push(new Tree(x, y, sketch.random(40,20), sketch.random(8,12), sketch.random(w,h)));////x,y,startsize , number of steps, length
+      //trees[trees.length-1].populate();
     }
   }
+  sketch.print("trees populated  cc="+String(cell_Count)+"   l="+String(trees.length));
 
   pause = new Game_Menu();
-  sketch.frameRate(60);
+  sketch.frameRate(5);
   sketch.createCanvas(w, h);
   sketch.colorMode(sketch.HSB);
   //noStroke();
@@ -66,6 +70,7 @@ sketch.draw = function() {
     //}
     consumer.display();
     for (var i = 0; i<trees.length; i++){
+
     trees[i].occ_test(consumer.r_sz);}
 
     for (var i = 0; i<trees.length; i++){
@@ -104,21 +109,15 @@ function Tree(x, y, s, num, len) { ///x,y,startsize , number of steps, length
   this.Start_sz = s;
   this.num = num; // this is how many circles
   this.T_sz = len; // this is how big the start size is
-  this.xlocs = [];
-  this.ylocs = [];
-  this.sizes = [];
-
+  this.xlocs = [this.num];
+  this.ylocs = [this.num];
+  this.sizes = [this.num];
+  this.displayRange = this.num;
   //this.sml_rate =
   this.scaler = (this.T_sz/this.num)  // this is the scale factor
-
-////////////////////
-
-
   this.last_x;
   this.last_y;
   this.last_sz;
-
-
 ///////////////////
 
 this.reduce = function(){
@@ -126,7 +125,6 @@ this.reduce = function(){
   this.ylocs.pop();
   this.sizes.pop();
 }
-
 
 //this.occ_test = function(range) {
 //  if (this.sizes.length > 1){
@@ -143,27 +141,27 @@ this.occ_test = function(range) {
 
   if (sketch.dist(this.Start_x,this.Start_y,sketch.mouseX,sketch.mouseY)<range) {
     if (this.sizes.length > 2){
-      this.xlocs.pop();
-      this.ylocs.pop();
-      this.sizes.pop();
+      this.displayRange -=1;
+      //this.xlocs.pop();
+      //this.ylocs.pop();
+      //this.sizes.pop();
     }
   }
   else{
-    if(this.sizes.length < this.num){
-      var len = this.xlocs.length-1;
-      last_x = [this.xlocs[len][0],this.xlocs[len][1],this.xlocs[len][2],this.xlocs[len][3]];
-      last_y = [this.ylocs[len][0],this.ylocs[len][1],this.ylocs[len][2],this.ylocs[len][3]];
-      last_sz = this.sizes[len];
+    //if(this.sizes.length < this.num){
+    if(this.displayRange < this.num-1 ){
+      this.displayRange +=1;
+      //var len = this.xlocs.length-1;
+      //last_x = [this.xlocs[len][0],this.xlocs[len][1],this.xlocs[len][2],this.xlocs[len][3]];
+      //last_y = [this.ylocs[len][0],this.ylocs[len][1],this.ylocs[len][2],this.ylocs[len][3]];
+      //last_sz = this.sizes[len];
 
-      this.xlocs.push([last_x[0] +sketch.random(0,last_sz*.3), last_x[1] -sketch.random(0,last_sz*.3), last_x[2] +sketch.random(0,last_sz*.3),last_x[3] -sketch.random(0,last_sz*.3)]);
-      this.ylocs.push([last_y[0] +sketch.random(0,last_sz*.3), last_y[2] -sketch.random(0,last_sz*.3), last_y[2] -sketch.random(0,last_sz*.3),last_y[3] +sketch.random(0,last_sz*.3)]);
-      this.sizes.push(last_sz * 0.9);
+      //this.xlocs.push([last_x[0] +sketch.random(0,last_sz*.3), last_x[1] -sketch.random(0,last_sz*.3), last_x[2] +sketch.random(0,last_sz*.3),last_x[3] -sketch.random(0,last_sz*.3)]);
+      //this.ylocs.push([last_y[0] +sketch.random(0,last_sz*.3), last_y[2] -sketch.random(0,last_sz*.3), last_y[2] -sketch.random(0,last_sz*.3),last_y[3] +sketch.random(0,last_sz*.3)]);
+      //this.sizes.push(last_sz * 0.9);
   }
 }
 }
-
-
-
 ///////////////////////////////////////
 
 this.populate = function() {
@@ -195,9 +193,11 @@ this.populate = function() {
   }
 this.display = function() {
   //var col = [color(20,200,30),color(100,30,100),color(200,100,50),color(230,20,150)];
-  var col = [sketch.color(100,52,35),sketch.color(133,52,35),sketch.color(166,52,35),sketch.color(200,52,35)];
-  for (var i = 2; i< this.xlocs.length; i++){
-
+  //var col = [sketch.color(100,52,35),sketch.color(133,52,35),sketch.color(166,52,35),sketch.color(200,52,35)];
+  //for (var i = 2; i< this.xlocs.length; i++){
+  for (var i = 2 ; i< this.displayRange; i++){
+    var degree = sketch.map(i,0,this.num,15,70);
+    var col = [sketch.color(100,52,degree),sketch.color(133,52,degree),sketch.color(166,52,degree),sketch.color(200,52,degree)];
     for (var j = 0; j<4; j++){
       //print(j, this.xlocs[i][j]);
       sketch.fill(col[j]);
@@ -224,10 +224,10 @@ function keyPressed(){
     }
 }
 
-function mouseClicked(){
-  trees.push(new Tree(sketch.mouseX, sketch.mouseY, 20, 80, 250));
-  trees[trees.length-1].populate();
-}
+//function mouseClicked(){
+  //trees.push(new Tree(sketch.mouseX, sketch.mouseY, 20, 80, 250));
+  //trees[trees.length-1].populate();
+//}
 
 function Settler(r,x,y){
     this.r_sz = r;
@@ -297,7 +297,7 @@ function Game_Menu(){
     }
 }
 
-function  keyTyped() {
+function  sketch.keyTyped() {
     if (key === "p"){
         pause.pauseToggle();
         pause.menu();
