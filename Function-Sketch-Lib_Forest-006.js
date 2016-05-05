@@ -117,7 +117,7 @@ function Tree(x, y, s, num, len) { ///x,y,startsize , number of steps, length
   this.last_sz;
 ///////////////////tree function/////////////////////
 this.occ_test = function(range) {
-  if (sketch.dist(this.Start_x,this.Start_y,sketch.mouseX,sketch.mouseY)<range/2) {if (this.displayRange > 2){this.displayRange -=1;}}
+  if (sketch.dist(this.Start_x,this.Start_y,sketch.mouseX,sketch.mouseY)<range/2) {if (this.displayRange > -8 ){this.displayRange -=1;}}
   else{if(this.displayRange < this.num-1 ){this.displayRange +=1;}}
 }
 ///////////////tree function////////////////////////
